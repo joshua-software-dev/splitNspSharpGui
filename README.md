@@ -1,3 +1,5 @@
+![Preview](/Assets/splitNspSharpGui.png)
+
 # splitNspSharpGui
 A cross platform command line/GUI application for splitting NSP files. There are two releases of this program, one is "splitNspSharp" and the other is "splitNspSharpGui". The former provides a similar interface to the command line python script by AnalogMan151, and the latter is a mouse driven program that does not require the use of a command line.
 
