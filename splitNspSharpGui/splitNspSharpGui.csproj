@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Optimize>true</Optimize>
+        <AssemblyVersion>$(Version)</AssemblyVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\splitNspSharpLib\splitNspSharpLib.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Eto.Forms" Version="2.5.2" />
+    </ItemGroup>
+
+</Project>

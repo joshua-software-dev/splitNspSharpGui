@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RuntimeIdentifier>osx.10.10-x64</RuntimeIdentifier>
+        <AssemblyVersion>$(Version)</AssemblyVersion>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(Configuration)' == 'contained' ">
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(Configuration)' == 'dependent' ">
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>false</SelfContained>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\splitNspSharpGui\splitNspSharpGui.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Eto.Platform.Mac64" Version="2.5.2" />
+    </ItemGroup>
+
+</Project>
