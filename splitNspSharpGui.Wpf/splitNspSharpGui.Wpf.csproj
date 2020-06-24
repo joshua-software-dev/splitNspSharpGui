@@ -1,34 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+    
+    <Import Project="../Version/GuiVersion.csproj" />
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <AssemblyVersion>$(Version)</AssemblyVersion>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <Optimize>true</Optimize>
+        <TrimUnusedDependencies>true</TrimUnusedDependencies>
     </PropertyGroup>
     
-    <PropertyGroup Condition=" '$(RuntimeIdentifier)' == 'win-x64' And '$(Configuration)' == 'contained' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'contained' ">
         <PublishSingleFile>true</PublishSingleFile>
         <PublishReadyToRun>true</PublishReadyToRun>
         <SelfContained>true</SelfContained>
     </PropertyGroup>
     
-    <PropertyGroup Condition=" '$(RuntimeIdentifier)' == 'win-x64' And '$(Configuration)' == 'dependent' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'dependent' ">
         <PublishSingleFile>true</PublishSingleFile>
         <PublishReadyToRun>true</PublishReadyToRun>
         <SelfContained>false</SelfContained>
     </PropertyGroup>
     
-    <PropertyGroup Condition=" '$(RuntimeIdentifier)' == 'win-x64' And '$(Configuration)' == 'framework' ">
+    <PropertyGroup Condition=" '$(Configuration)' == 'framework' ">
         <TargetFramework>net48</TargetFramework>
         <PublishReadyToRun>true</PublishReadyToRun>
     </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(PublishReadyToRun)' == 'true' ">
+        <CheckIsPublishReadyToRun>true</CheckIsPublishReadyToRun>
+    </PropertyGroup>
+  
+    <PropertyGroup Condition=" '$(PublishReadyToRun)' != 'true' ">
+        <CheckIsPublishReadyToRun>false</CheckIsPublishReadyToRun>
+    </PropertyGroup>
+  
+    <Target Name="IsPlatformOptimized" BeforeTargets="Build">
+        <Message Text="PublishReadyToRun = $(CheckIsPublishReadyToRun) " Importance="high" />
+    </Target>
+    
+    <ItemGroup Condition=" '$(Configuration)' == 'framework' ">
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.0" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\splitNspSharpGui\splitNspSharpGui.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.0" />
         <PackageReference Include="Eto.Platform.Wpf" Version="2.5.2" />
     </ItemGroup>
 

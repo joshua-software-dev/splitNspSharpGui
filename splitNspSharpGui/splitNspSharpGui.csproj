@@ -2,10 +2,11 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <Optimize>true</Optimize>
-        <AssemblyVersion>$(Version)</AssemblyVersion>
+        <TrimUnusedDependencies>true</TrimUnusedDependencies>
     </PropertyGroup>
-
+    
     <ItemGroup>
         <ProjectReference Include="..\splitNspSharpLib\splitNspSharpLib.csproj" />
     </ItemGroup>

@@ -1,10 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <Import Project="../Version/GuiVersion.csproj" />
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
         <AssemblyVersion>$(Version)</AssemblyVersion>
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+        <Optimize>true</Optimize>
+        <TrimUnusedDependencies>true</TrimUnusedDependencies>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
@@ -14,15 +17,29 @@
     
     <PropertyGroup Condition=" '$(Configuration)' == 'contained' ">
         <PublishSingleFile>true</PublishSingleFile>
-        <PublishReadyToRun>true</PublishReadyToRun>
         <SelfContained>true</SelfContained>
     </PropertyGroup>
     
     <PropertyGroup Condition=" '$(Configuration)' == 'dependent' ">
         <PublishSingleFile>true</PublishSingleFile>
-        <PublishReadyToRun>true</PublishReadyToRun>
         <SelfContained>false</SelfContained>
     </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$([MSBuild]::IsOsPlatform(Linux))' == 'true' And '$(RuntimeIdentifier)' == 'linux-x64' ">
+        <PublishReadyToRun>true</PublishReadyToRun>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(PublishReadyToRun)' == 'true' ">
+        <CheckIsPublishReadyToRun>true</CheckIsPublishReadyToRun>
+    </PropertyGroup>
+  
+    <PropertyGroup Condition=" '$(PublishReadyToRun)' != 'true' ">
+        <CheckIsPublishReadyToRun>false</CheckIsPublishReadyToRun>
+    </PropertyGroup>
+  
+    <Target Name="IsPlatformOptimized" BeforeTargets="Build">
+        <Message Text="PublishReadyToRun = $(CheckIsPublishReadyToRun) " Importance="high" />
+    </Target>
 
     <ItemGroup>
         <ProjectReference Include="..\splitNspSharpGui\splitNspSharpGui.csproj" />
