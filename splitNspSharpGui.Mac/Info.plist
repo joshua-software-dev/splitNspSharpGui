@@ -7,14 +7,18 @@
     <key>CFBundleIdentifier</key>
     <string>com.example.splitNspSharpGui</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
+    <string>1.0.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1.0.0.0</string>
     <key>LSMinimumSystemVersion</key>
-    <string>10.12</string>
+    <string>10.10</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
-    <key>NSHumanReadableCopyright</key>
-    <string></string>
     <key>CFBundleIconFile</key>
     <string>Icon.icns</string>
+    <key>LSArchitecturePriority</key>
+	<array>
+		<string>x86_64</string>
+	</array>
   </dict>
 </plist>
