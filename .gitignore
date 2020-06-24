@@ -30,3 +30,6 @@ splitNspSharpLib/bin
 splitNspSharpLib/bin/*
 splitNspSharpLib/obj
 splitNspSharpLib/obj/*
+
+release_binaries
+release_binaries/*

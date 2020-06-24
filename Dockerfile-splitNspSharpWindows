@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1809
+COPY . c:/temp/
+WORKDIR c:/temp/
+RUN dotnet.exe publish splitNspSharp -c contained -r win-x64
+RUN dotnet.exe publish splitNspSharp -c dependent -r win-x64
+RUN dotnet.exe publish splitNspSharp -c framework -r win-x64
+ENTRYPOINT cmd.exe
