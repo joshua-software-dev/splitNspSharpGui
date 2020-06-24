@@ -3,14 +3,13 @@ using Eto.Forms;
 
 namespace splitNspSharpGui.Mac
 {
-    class MainClass
+    internal static class MainClass
     {
         [STAThread]
         public static void Main(string[] args)
         {
-            var app = new Application(Eto.Platforms.Mac64);
-            var formInit = new FormInitializer(app);
-            app.Run(formInit.mainForm);
+            Eto.Style.Add<Eto.Mac.Forms.ApplicationHandler>(null, handler => handler.AllowClosingMainForm = true);
+            new Application(Eto.Platforms.Mac64).Run(new MainForm());
         }
     }
 }

@@ -1,72 +1,69 @@
-using System;
-using System.Threading.Tasks;
 using Eto.Forms;
 using Eto.Drawing;
-using splitNspSharpLib;
+using System;
+using System.Threading.Tasks;
 
 namespace splitNspSharpGui
 {
-    public class ResizeableForm : Form
-    {
-        public event EventHandler<(Form, bool)> FixResizeable; 
-        
-        public void SetResizeableState(bool value)
-        {
-            this.Resizable = value;
-            FixResizeable?.Invoke(this, (this, value));
-        }
-    }
-    
     public class MainForm : ResizeableForm
     {
-        private readonly Application _app;
-        private readonly ProgressForm _progressForm;
-        private SplitNspSharpLib _library;
+        private readonly ProgressDialog _progressDialog;
 
         private string _inputFile;
         private string _outputFolder;
         private bool _inPlace;
 
-        public MainForm(Application app, ProgressForm progressForm)
-        {
-            Title = "splitNspSharpGui " + (System.Reflection.Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() ?? "");
-            ClientSize = new Size(400, 170);
-            MinimumSize = ClientSize;
-            Resizable = false;
-            Maximizable = false; 
+        private const string MainWindowTitle = "splitNspSharpGui";
+        private const string DefaultInputFileLabel = "Input File: ";
+        private const string MissingFileNameLabel = "Choose an input file";
+        private const string OpenFileButtonLabel = "Open NSP File";
+        private const string DefaultInputFolderLabel = "Output Folder: ";
+        private const string MissingFolderNameLabel = "Same as input file";
+        private const string OpenFolderButtonLabel = "Choose Output Folder";
+        private const string EnableInPlaceSplittingDesc = "Enable splitting of input file\ninstead of creating a split copy.";
+        private const string StartWorkButtonLabel = "Split NSP";
 
-            _app = app;
-            _progressForm = progressForm;
+        public MainForm()
+        {
+            Title = MainWindowTitle + " " + Version.GetVersion();
+            ClientSize = new Size(400, 170);
+            IsResizable = false;
+            Maximizable = false; 
             
-            InitControls();
+            _progressDialog = new ProgressDialog();
+
+            InitContent();
+            InitEventHooks();
         }
-        
+
         private async void ProgressAsync(object sender, EventArgs e)
         {
-            Content.Enabled = false;
-
-            _outputFolder = _library.ValidateOutputDirectory(_inputFile, _outputFolder);
-            var splitNum = _library.GetNspSplitCount(_inputFile, _outputFolder, _inPlace);
-
+            _outputFolder = RegisterSplitNspGuiEvents.Library.ValidateOutputDirectory(_inputFile, _outputFolder);
+            var splitNum = RegisterSplitNspGuiEvents.Library.GetNspSplitCount(_inputFile, _outputFolder, _inPlace);
+            
             if (splitNum > 0)
             {
-                _progressForm.SetProgressMinMax(0, splitNum + 1);
-                await Task.Run(() => _library.Split(_inputFile, _outputFolder, _inPlace, splitNum));
+                await Task.Run(
+                    () => RegisterSplitNspGuiEvents.Library.Split(
+                        _inputFile,
+                        _outputFolder,
+                        _inPlace,
+                        splitNum
+                    )
+                );
             }
-
-            Content.Enabled = true;
         }
 
-        private void InitControls()
+        private void InitContent()
         {
-            var fileLabel = new Label() { Text = "Input File: Choose an input file.", Wrap = WrapMode.None };
-            var openFileButton = new Button() { Height = 40, Text = "Open NSP File" };
+            var fileLabel = new Label { Text = DefaultInputFileLabel + MissingFileNameLabel, Width = Size.Width, Wrap = WrapMode.None };
+            var openFileButton = new Button { Height = 40, Text = OpenFileButtonLabel };
             var openFileDialog = new OpenFileDialog();
-            var folderLabel = new Label() { Text = "Output Folder: Same as input file.", Wrap = WrapMode.None };
-            var openFolderButton = new Button() { Height = 40, Width = 100, Text = "Choose output folder." };
+            var folderLabel = new Label { Text = DefaultInputFolderLabel + MissingFolderNameLabel, Width = Size.Width, Wrap = WrapMode.None };
+            var openFolderButton = new Button { Height = 40, Width = 100, Text = OpenFolderButtonLabel };
             var openFolderDialog = new SelectFolderDialog();
-            var checkBox = new CheckBox() { Height = 50, Text = "Enable splitting of input file\ninstead of creating a split copy." };
-            var startSplittingButton = new Button { Enabled = false, Height = 10, Text = "Split NSP" };
+            var checkBox = new CheckBox { Height = 50, Text = EnableInPlaceSplittingDesc };
+            var startSplittingButton = new Button { Enabled = false, Height = 10, Text = StartWorkButtonLabel };
             
             openFileButton.Click += (sender, e) =>
             {
@@ -81,16 +78,24 @@ namespace splitNspSharpGui
                 }
 
                 startSplittingButton.Enabled = _inputFile != null;
-                fileLabel.Text = "Input File: " + (_inputFile ?? "");
+                fileLabel.Text = DefaultInputFileLabel + (_inputFile ?? MissingFileNameLabel);
             };
-            
+
             openFolderButton.Click += (sender, e) =>
             {
-                openFolderDialog.ShowDialog(openFolderButton);
-                _outputFolder = openFolderDialog.Directory;
-                folderLabel.Text = "Output Folder: " + (_outputFolder ?? "Same as input file");
-            };
+                try
+                {
+                    openFolderDialog.ShowDialog(openFolderButton);
+                    _outputFolder = openFolderDialog.Directory;
+                }
+                catch (NullReferenceException)
+                {
+                    _outputFolder = null;
+                }
             
+                folderLabel.Text = DefaultInputFolderLabel + (_outputFolder ?? MissingFolderNameLabel);
+            };
+
             checkBox.CheckedChanged += (sender, e) =>
             {
                 _inPlace = checkBox.Checked ?? false;
@@ -124,69 +129,17 @@ namespace splitNspSharpGui
             );
 
             Content = layout;
-            
-            InitEventHooks();
+        }
+        
+        private static void KillProgramOnMainWindowExit(object sender, EventArgs e)
+        {
+            Application.Instance.Quit();
         }
 
         private void InitEventHooks()
         {
-            _library = new SplitNspSharpLib(false);
-
-            _library.InputFileTooSmall += (sender, args) => _app.Invoke(
-                () => MessageBox.Show
-                (
-                    "Input NSP is under 4GiB and does not need to be split.", 
-                    MessageBoxType.Error
-                )
-            );
-
-            _library.NeedFreeSpace += (sender, args) => _app.Invoke(
-                () => MessageBox.Show
-                (
-                    $"Not enough free space to run! At least " + args + " bytes are needed.", 
-                    MessageBoxType.Error
-                )
-            );
-
-            _library.Need4GbFreeSpace += (sender, args) => _app.Invoke(
-                () => MessageBox.Show
-                (
-                    $"Not enough free space to run! At least " + args + " bytes are needed.", 
-                    MessageBoxType.Error
-                )
-            );
-
-            _library.BeginningWork += (sender, args) => _app.Invoke
-            (
-                async () =>
-                {
-                    _progressForm.Topmost = true;
-                    _progressForm.Show();
-                    await Task.Delay(100);
-                    _progressForm.Topmost = false;
-                }
-            );
-
-            _library.StartWritingFile += (sender, args) => _app.Invoke(() => _progressForm.IncrementProgressBar());
-            _library.FinishWork += (sender, args) => _app.Invoke(() => _progressForm.Visible = false);
-        }
-    }
-    
-    public class FormInitializer
-    {
-        public readonly MainForm mainForm;
-        public readonly ProgressForm progressForm;
-        
-        public FormInitializer(Application app)
-        {
-            progressForm = new ProgressForm();
-            mainForm = new MainForm(app, progressForm);
-        }
-
-        public void FixResizable()
-        {
-            mainForm.SetResizeableState(mainForm.Resizable);
-            progressForm.SetResizeableState(progressForm.Resizable);
+            Closed += KillProgramOnMainWindowExit;
+            Application.Instance.Terminating += (s, e) => Closed -= KillProgramOnMainWindowExit;
         }
     }
 }

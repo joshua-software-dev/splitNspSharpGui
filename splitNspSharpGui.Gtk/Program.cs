@@ -3,14 +3,12 @@ using Eto.Forms;
 
 namespace splitNspSharpGui.Gtk
 {
-    class MainClass
+    internal static class MainClass
     {
-        private static void ResizableFixer(object sender, (Form, bool) values)
+        private static void ResizableFixer(ResizeableForm sender, bool value)
         // Reflection work around for Resizable = false not doing anything for GTK
         {
-            var (form, value) = values;
-
-            var refControl = form.Handler.GetType().GetProperty("Control").GetValue(form.Handler, null);
+            var refControl = sender.Handler.GetType().GetProperty("Control").GetValue(sender.Handler, null);
             var resizeProp = refControl.GetType().GetProperty("Resizable");
             resizeProp.SetValue(refControl, value, null);
         }
@@ -18,12 +16,8 @@ namespace splitNspSharpGui.Gtk
         [STAThread]
         public static void Main(string[] args)
         {
-            var app = new Application(Eto.Platforms.Gtk);
-            var formInit = new FormInitializer(app);
-            formInit.mainForm.FixResizeable += ResizableFixer;
-            formInit.progressForm.FixResizeable += ResizableFixer;
-            formInit.FixResizable();
-            app.Run(formInit.mainForm);
+            ResizeableForm.IsResizableChangeEvent += ResizableFixer;
+            new Application(Eto.Platforms.Gtk).Run(new MainForm());
         }
     }
 }
