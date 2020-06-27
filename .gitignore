@@ -1,6 +1,11 @@
 .idea/
 .idea/*
 
+_build/bin
+_build/bin/*
+_build/obj
+_build/obj/*
+
 splitNspSharp/bin
 splitNspSharp/bin/*
 splitNspSharp/obj

@@ -3,5 +3,4 @@ COPY . c:/temp/
 WORKDIR c:/temp/
 RUN dotnet.exe publish splitNspSharpGui.Wpf -c contained -r win-x64
 RUN dotnet.exe publish splitNspSharpGui.Wpf -c dependent -r win-x64
-RUN dotnet.exe publish splitNspSharpGui.Wpf -c framework -r win-x64
 ENTRYPOINT cmd.exe

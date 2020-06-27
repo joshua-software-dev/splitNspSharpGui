@@ -1,0 +1,1 @@
+@dotnet run --project "_build/_build.csproj" -- %*

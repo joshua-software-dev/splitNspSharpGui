@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "splitNspSharpLib", "splitNs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "splitNspSharp", "splitNspSharp\splitNspSharp.csproj", "{9887F0CB-9E96-4C78-A083-5BD80B9D57D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_build", "_build\_build.csproj", "{6B1680E1-E889-4DDD-8419-34183C4C186C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{9887F0CB-9E96-4C78-A083-5BD80B9D57D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9887F0CB-9E96-4C78-A083-5BD80B9D57D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9887F0CB-9E96-4C78-A083-5BD80B9D57D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B1680E1-E889-4DDD-8419-34183C4C186C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1680E1-E889-4DDD-8419-34183C4C186C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1680E1-E889-4DDD-8419-34183C4C186C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1680E1-E889-4DDD-8419-34183C4C186C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
